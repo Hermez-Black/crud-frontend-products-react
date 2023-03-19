@@ -7,8 +7,8 @@ import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 
 export default function Product({
   productData: { id, name, category, price, isAvailable },
-  deleteProduct,
-  updateProduct
+  updateProduct,
+  openModalToDeleteProduct
 }) {
   const styleButton = {
     height: 55,
@@ -61,7 +61,7 @@ export default function Product({
               color="error"
               size="small"
               sx={styleButtonRed}
-              onClick={() => deleteProduct(id)}
+              onClick={() => openModalToDeleteProduct(id)}
               >
               <DeleteForeverOutlinedIcon />
             </Button>

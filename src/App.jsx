@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ButtonCreateProduct from './components/Button';
 import ProductsList from './components/ProductsList';
 import ProductsForm from './components/ProductsForm';
+import ModalDelete from './components/ModalDelete';
+import Loader from './components/Loader';
 import {
   getAllProducts,
   deleteProductById,
@@ -14,11 +16,16 @@ export default function App() {
   const [products, setProducts] = useState([]);
   const [productSelected, setProductSelected] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const updateAndSettingProducts = () => {
     getAllProducts((res) => {
       setProducts(res.data);
-      console.log(res);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 900);
     });
   }
 
@@ -26,22 +33,37 @@ export default function App() {
     updateAndSettingProducts();
   }, [])
 
-  const deleteProduct = (id) => {
-    deleteProductById(id, (res) => {
+  const handleAgreeDelete = () => {
+    deleteProductById(idToDelete, (res) => {
       updateAndSettingProducts();
+      setOpen(false);
     })
-  };
-
-  const updateProduct = (productData) => {
-    alert(productData.id);
-    setProductSelected(productData);
-    // updateProductById(productData.id, productData,
-    // (res) => {
-    //    closeModal();
-    //    updateAndSettingProducts();
-    // })
   }
 
+  const handleCloseCancel = () => {
+    console.log("Cancelando");
+    setOpen(false);
+    setIdToDelete(0);
+  }
+
+  const openModalToDeleteProduct = (id) => {
+    setOpen(true);
+    setIdToDelete(id);
+  }
+
+  const openModalToUpdateProduct = (productData) => {
+    setProductSelected(productData);
+    setShowModal(true);
+  }
+
+  const updateProduct = (dataProduct) => {
+    updateProductById(dataProduct.id, dataProduct,
+      (res) => {
+        closeModal();
+        updateAndSettingProducts();
+        setProductSelected(null);
+    });
+  }
   const createProductAction = (data) => {
     createProduct(() => {
       updateAndSettingProducts();
@@ -57,20 +79,36 @@ export default function App() {
     setShowModal(false);
   }
 
+  if (isLoading) {
+    return (<Loader />);
+  }
+
   return (
     <div className="App">
+      <ModalDelete
+        open={open}
+        handleAgreeDelete={handleAgreeDelete}
+        handleCloseCancel={handleCloseCancel} />
       <ProductsForm
         showModal={showModal}
         closeModalFunc={closeModal}
-        createProductAction={createProductAction}></ProductsForm>
+        createProductAction={createProductAction}
+        dataToUpdateProduct={productSelected}
+        updateProductAction={updateProduct}
+        methodSetProductSelected={setProductSelected} />
       <div className='navHeaderContainer'>
         <h1>Productos</h1>
         <ButtonCreateProduct newProductAction={showModalByProduct}/>
       </div>
-      <ProductsList
+      {
+        !products.length ?
+        <h1 style={{ marginTop: 30 }}>No hay productos, intenta crear algunos</h1>
+        :
+        <ProductsList
         products={products}
-        deleteProduct={(id) => deleteProduct(id)}
-        updateProduct={(productData => updateProduct(productData))} />
+        openModalToDeleteProduct= {openModalToDeleteProduct}
+        updateProduct={(productData => openModalToUpdateProduct(productData))} />
+      }
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -9,7 +10,13 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import MenuItem from '@mui/material/MenuItem';
 
-export default function ProductsForm({showModal, closeModalFunc, createProductAction}) {
+export default function ProductsForm({
+  showModal,
+  closeModalFunc,
+  createProductAction,
+  dataToUpdateProduct,
+  updateProductAction,
+  methodSetProductSelected}) {
   const {
     register,
     reset,
@@ -17,14 +24,25 @@ export default function ProductsForm({showModal, closeModalFunc, createProductAc
     formState: { errors }
   } = useForm();
 
+  useEffect(() => {
+    if (dataToUpdateProduct != null) {
+      reset(dataToUpdateProduct);
+    }
+  }, [dataToUpdateProduct])
+  
+
   const handleClose = () => {
     closeModalFunc();
     emptyform();
+    methodSetProductSelected(null);
   }
 
   const onValidCallback = (data) => {
-    console.log(data);
-    createProductAction(data);
+    if (dataToUpdateProduct != null) {
+      updateProductAction(data);
+    } else {
+      createProductAction(data);
+    }
     emptyform();
   }
 
@@ -52,11 +70,6 @@ export default function ProductsForm({showModal, closeModalFunc, createProductAc
       <Dialog open={showModal} onClose={handleClose}>
         <DialogTitle>Nuevo Producto</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Antes de crear un producto asegurate de que este disponible
-            y que sus caracteristicas esten integras y correctamente registradas,
-            gracias.
-          </DialogContentText>
           <form onSubmit={handleSubmit(onValidCallback)}>
             <TextField
               autoFocus
@@ -107,7 +120,9 @@ export default function ProductsForm({showModal, closeModalFunc, createProductAc
         </TextField>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSubmit(onValidCallback)}>Crear</Button>
+          <Button onClick={handleSubmit(onValidCallback)}>{
+            dataToUpdateProduct != null ? "Actualizar" : "Crear"
+          }</Button>
         </DialogActions>
         </form>
         </DialogContent>

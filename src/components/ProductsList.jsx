@@ -1,6 +1,6 @@
 import Product from "./Product";
 
-export default function ProductsList({ products, deleteProduct, updateProduct }) {
+export default function ProductsList({ products, updateProduct, openModalToDeleteProduct }) {
   return (
     <div className="containerList">
     { products?.map(
@@ -9,8 +9,8 @@ export default function ProductsList({ products, deleteProduct, updateProduct })
             <Product
                 key={product?.id}
                 productData={product}
-                deleteProduct={deleteProduct}
-                updateProduct={updateProduct}/>);
+                updateProduct={updateProduct}
+                openModalToDeleteProduct={openModalToDeleteProduct}/>);
         }
     ) }
     </div>
