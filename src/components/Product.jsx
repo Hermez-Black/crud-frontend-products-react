@@ -59,17 +59,16 @@ export default function Product({
             <Button
               variant="contained"
               color="error"
-              size="small"
               sx={styleButtonRed}
               onClick={() => openModalToDeleteProduct(id)}
               >
-              <DeleteForeverOutlinedIcon />
+              <DeleteForeverOutlinedIcon sx={{ fontSize: 50, marginBottom: 1  }}/>
             </Button>
             <Button
               variant="outlined"
               sx={styleButton}
               onClick={() => updateProduct({ id, name, category, price, isAvailable })}>
-              <CreateOutlinedIcon />
+              <CreateOutlinedIcon sx={{ fontSize: 50, marginBottom: 1 }} />
             </Button>
           </div>
         </Card.Body>
