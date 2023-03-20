@@ -12,7 +12,7 @@ export default function Product({
 }) {
   const styleButton = {
     height: 55,
-    width: 0,
+    width: 90,
     padding: "0px !important",
     marginLeft: 1
   };

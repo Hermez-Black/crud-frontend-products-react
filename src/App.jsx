@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState, useEffect } from 'react';
 import ButtonCreateProduct from './components/Button';
 import ProductsList from './components/ProductsList';
 import ProductsForm from './components/ProductsForm';
 import ModalDelete from './components/ModalDelete';
+import ModalAlert from './components/ModalAlert';
 import Loader from './components/Loader';
 import {
   getAllProducts,
@@ -19,13 +20,23 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [idToDelete, setIdToDelete] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState("update");
+  const [alertCustomMessage, setAlertCustomMessage] = useState("");
+
+  const showModalAlert = (typeAlert, customMessage) => {
+    setShowAlert(true);
+    setAlertType(typeAlert);
+    setAlertCustomMessage(customMessage);
+  }
 
   const updateAndSettingProducts = () => {
+    setIsLoading(true);
     getAllProducts((res) => {
       setProducts(res.data);
       setTimeout(() => {
         setIsLoading(false);
-      }, 900);
+      }, 500);
     });
   }
 
@@ -37,6 +48,7 @@ export default function App() {
     deleteProductById(idToDelete, (res) => {
       updateAndSettingProducts();
       setOpen(false);
+      showModalAlert("delete", `${idToDelete} fue eliminado!`);
     })
   }
 
@@ -62,12 +74,14 @@ export default function App() {
         closeModal();
         updateAndSettingProducts();
         setProductSelected(null);
+        showModalAlert("update", `${dataProduct.name} fue actualizado!`);
     });
   }
   const createProductAction = (data) => {
     createProduct(() => {
       updateAndSettingProducts();
       closeModal();
+      showModalAlert("create", `${data.name} fue creado!`);
     }, data);
   }
 
@@ -85,6 +99,12 @@ export default function App() {
 
   return (
     <div className="App">
+      <ModalAlert
+        alertType={alertType}
+        alertCustomMessage={alertCustomMessage}
+        closeAlert={() => setShowAlert(false)}
+        statusModalAlert={showAlert}
+      />
       <ModalDelete
         open={open}
         handleAgreeDelete={handleAgreeDelete}

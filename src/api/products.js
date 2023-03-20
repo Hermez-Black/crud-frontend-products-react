@@ -31,13 +31,13 @@ export const createProduct = (onSuccessCallback, dataProduct) => {
 export const updateProductById = (id, dataProduct, onSuccessCallback) => {
   return axios
     .put(productUrlById(id), dataProduct)
-    .then(onSuccessCallback)  // probar sin la arrow function
+    .then(onSuccessCallback)
     .catch(handlingError);
 };
 
 export const deleteProductById = (id, onSuccessCallback) => {
   return axios
     .delete(productUrlById(id))
-    .then(onSuccessCallback)  // probar sin la arrow function
+    .then(onSuccessCallback)
     .catch(handlingError);
 };
